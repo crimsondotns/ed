@@ -1,0 +1,39 @@
+name: Dexscreener Script
+
+on:
+  schedule:
+    - cron: '*/10 * * * *'  # ทำงานทุก 10 นาที
+  workflow_dispatch:        # ให้สามารถกดรันมือได้
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Install dependencies
+        run: pnpm install
+
+      - name: Create Account
+        run: |
+          echo '${{ secrets.SERVICE_ACCOUNT_JSON }}' > "service account.json"
+          echo '${{ secrets.ENV_FILE }}' > ".env"
+
+      - name: Run script
+        run: pnpm start
+        env:
+          GITHUB_ACTIONS: true
