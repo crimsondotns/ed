@@ -1,7 +1,7 @@
 import { google } from 'googleapis';
 import axios from 'axios';
 import fs from 'fs';
-// import 'dotenv/config'; // ปลดคอมเม้นต์บรรทัดนี้หากต้องการใช้ .env (ต้องลง npm install dotenv ก่อน)
+import 'dotenv/config'; // โหลดค่าจาก .env
 
 // ==========================================
 // ⚙️ CONFIGURATION (ส่วนที่ท่านสามารถปรับแต่งได้)
@@ -212,12 +212,11 @@ async function runAll() {
     const startTime = Date.now();
     console.log(`\n[${new Date().toLocaleTimeString()}] ⏳ เริ่มการทำงาน...`);
     
-    const authClient = new google.auth.JWT(
-        SERVICE_ACCOUNT.client_email,
-        undefined,
-        SERVICE_ACCOUNT.private_key,
-        ['https://www.googleapis.com/auth/spreadsheets']
-    );
+    const authClient = new google.auth.JWT({
+        email: SERVICE_ACCOUNT.client_email,
+        key: SERVICE_ACCOUNT.private_key,
+        scopes: ['https://www.googleapis.com/auth/spreadsheets']
+    });
 
     const promises = CONFIG.SPREADSHEET_IDS.map(id => processSpreadsheet(authClient, id));
     await Promise.all(promises);
