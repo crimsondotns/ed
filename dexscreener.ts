@@ -12,10 +12,10 @@ const CONFIG = {
     // (สามารถดึงจาก process.env หรือใส่ตรงๆ เป็น Array เช่น ["ID1", "ID2"])
     SPREADSHEET_IDS: process.env.SPREADSHEET_IDS 
         ? process.env.SPREADSHEET_IDS.split(',').map(id => id.trim()) 
-        : [""],
+        : ["1SL9DipKZbndCm18t13h_bhcAGYeXh-ks49Wp7fdnsEY"],
 
     // 📄 ชื่อหน้า Sheet ที่ต้องการทำงานด้วย
-    SHEET_NAME: process.env.SHEET_NAME || '',
+    SHEET_NAME: process.env.SHEET_NAME || 'page',
 
     // 🔍 ช่วงข้อมูลที่ต้องการอ่าน (ChainId และ PairAddress)
     READ_RANGE: 'A2:B', 
@@ -26,12 +26,21 @@ const CONFIG = {
     // ⏱️ ระยะห่างระหว่างดึงข้อมูล (มิลลิวินาที) - ป้องกันโดน Block API
     RATE_LIMIT_MS: 200,
 
-    // 🔑 ไฟล์กุญแจ Service Account
-    SERVICE_ACCOUNT_FILE: "./service account.json"
+    // 🔑 ข้อมูล Service Account (เลือกโหลดได้หลายทาง)
+    SERVICE_ACCOUNT_HARDCODED: {
+    }
 };
 
-// โหลดข้อมูลยืนยันตัวตน
-const SERVICE_ACCOUNT = JSON.parse(fs.readFileSync(CONFIG.SERVICE_ACCOUNT_FILE, "utf8"));
+// 🔐 โหลดข้อมูลยืนยันตัวตน (ลำดับความสำคัญ: Env > File > Hardcoded)
+const SERVICE_ACCOUNT = (() => {
+    try {
+        if (process.env.SERVICE_ACCOUNT_JSON) return JSON.parse(process.env.SERVICE_ACCOUNT_JSON);
+        if (fs.existsSync("./service account.json")) return JSON.parse(fs.readFileSync("./service account.json", "utf8"));
+    } catch (e) {
+        console.error("⚠️ ไม่สามารถโหลดไฟล์ Account ได้ แต่จะใช้ค่าสำรองในโค้ดแทน");
+    }
+    return CONFIG.SERVICE_ACCOUNT_HARDCODED;
+})();
 
 // ==========================================
 // 🔧 HELPERS (ฟังก์ชันเสริม)
