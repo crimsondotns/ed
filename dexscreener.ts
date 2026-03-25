@@ -175,12 +175,10 @@ async function processSpreadsheet(authClient: any, spreadsheetId: string) {
                 console.log(`GET ${chainId}/${pairAddress} ${statusColor}${status} ${statusText}\x1b[0m in ${totalTime}ms`);
                 if (pair) {
                     updates.push(mapPairDataToRow(pair, chainId));
-                } else {
-                    updates.push(Array(40).fill("")); // ถ้าไม่มีข้อมูล ให้ปล่อยว่างไว้แทนคำว่า "No Data"
                 }
 
             } catch (error: any) {
-                updates.push(Array(40).fill("")); // ถ้า Error ให้ปล่อยว่างไว้แทนคำว่า "Error"
+                // ข้ามไปหากเกิดข้อผิดพลาด
             }
         }
 
