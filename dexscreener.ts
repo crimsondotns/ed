@@ -200,7 +200,7 @@ async function processSpreadsheet(authClient: any, spreadsheetId: string) {
                 valueInputOption: 'USER_ENTERED',
                 requestBody: { values: updates }
             });
-            console.log(`✅ [${spreadsheetId}] บันทึกสำเร็จ: ${updates.length} แถว`);
+            console.log(`✅ บันทึกสำเร็จ: ${updates.length} แถว`);
         }
 
     } catch (error: any) {
